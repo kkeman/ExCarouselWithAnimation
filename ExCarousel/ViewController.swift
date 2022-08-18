@@ -44,7 +44,7 @@ class ViewController: UIViewController {
     return view
   }()
   
-  private var items = (0...100).map { _ in
+  private var items = (0...5).map { _ in
     MyModel(color: randomColor, isDimmed: true)
   }
   private var previousIndex: Int?
@@ -62,7 +62,56 @@ class ViewController: UIViewController {
     
     self.collectionView.dataSource = self
     self.collectionView.delegate = self
+      
+      
+      
+      
+      
+      
+      
+      self.view.addSubview(self.pageControl)
+//      NSLayoutConstraint.activate([
+//        self.pageControl.leftAnchor.constraint(equalTo: self.view.leftAnchor),
+//        self.pageControl.rightAnchor.constraint(equalTo: self.view.rightAnchor),
+//        self.pageControl.heightAnchor.constraint(equalToConstant: Const.itemSize.height),
+//        self.pageControl.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
+//      ])
+
   }
+//    lazy var pageControl: UIPageControl = {
+//        let view = UIPageControl()
+//        view.addTarget(self, action: #selector(pageValueDidChanged), for: .valueChanged)
+//        return view
+//    }()
+//    lazy var pageControl: UIPageControl = {
+//                  let pageControl = UIPageControl(frame: CGRect(x: 0, y: self.view.frame.maxY - 100, width: self.view.frame.maxX, height:50))
+//                  pageControl.backgroundColor = UIColor.orange
+//                  pageControl.numberOfPages = self.items.count
+//                  pageControl.currentPage = 0
+//                  pageControl.isUserInteractionEnabled = false
+//                  return pageControl
+//              }()
+    
+    private lazy var pageControl: UIPageControl = {
+            let pageControl = UIPageControl()
+            pageControl.translatesAutoresizingMaskIntoConstraints = false
+            pageControl.numberOfPages = self.items.count
+            pageControl.hidesForSinglePage = true
+            pageControl.currentPageIndicatorTintColor = .systemGray
+            pageControl.pageIndicatorTintColor = .systemGray3
+            return pageControl
+        }()
+
+    
+    @objc func pageValueDidChanged() {
+        let indexPath = IndexPath(row: pageControl.currentPage, section: 0)
+        let animated: Bool = {
+            guard #available(iOS 14.0, *) else { return true }
+            return pageControl.interactionState != .continuous
+        }()
+
+        collectionView.scrollToItem(at: indexPath, at: .left, animated: animated)
+    }
 }
 
 extension ViewController: UICollectionViewDataSource {
@@ -86,6 +135,27 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
     let cellWidth = Const.itemSize.width + Const.itemSpacing
     let index = round(scrolledOffsetX / cellWidth)
     targetContentOffset.pointee = CGPoint(x: index * cellWidth - scrollView.contentInset.left, y: scrollView.contentInset.top)
+      
+      
+      
+      
+      
+      
+//      let nextPage = Int(targetContentOffset.pointee.x / self.view.frame.width)
+//
+//      self.pageControl.currentPage = nextPage
+      
+//      let width = scrollView.bounds.size.width
+//      // 좌표보정을 위해 절반의 너비를 더해줌
+//      let x = scrollView.contentOffset.x + (width/2)
+//
+//      let newPage = Int(x / width)
+//      if self.pageControl.currentPage != newPage {
+//          self.pageControl.currentPage = newPage
+//      }
+      
+      let width = scrollView.frame.width
+      pageControl.currentPage = Int(scrollView.contentOffset.x / width)
   }
   
   func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -158,9 +228,24 @@ final class MyCollectionViewCell: UICollectionViewCell {
   func prepare(color: UIColor?, isDimmed: Bool) {
     self.myView.backgroundColor = color
     self.dimmedView.isHidden = !isDimmed
+      print("33333 isHidden = :\(!isDimmed)")
   }
 }
 
 private var randomColor: UIColor {
   UIColor(red: CGFloat(drand48()), green: CGFloat(drand48()), blue: CGFloat(drand48()), alpha: 1.0)
 }
+
+
+
+
+
+
+//extension ViewController: UIScrollViewDelegate {
+//    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+//
+//                  if fmod(scrollView.contentOffset.x, scrollView.frame.maxX) == 0 {
+//                      pageControl.currentPage = Int(scrollView.contentOffset.x / scrollView.frame.maxX)
+//                  }
+//              }
+//}
